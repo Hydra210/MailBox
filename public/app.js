@@ -64,6 +64,7 @@ async function loadMessages() {
   if (!mailbox) return;
   $("#current-title").textContent = mailbox.local_part + "@" + mailbox.domain;
   $("#empty-state").classList.add("hidden"); $("#inbox-view").classList.remove("hidden");
+  if (!selectedMessage) $("#inbox-view").classList.remove("reading");
   const q = $("#search").value.trim();
   const messages = await api("/api/messages?mailbox=" + encodeURIComponent(selectedMailbox) + "&q=" + encodeURIComponent(q));
   $("#message-count").textContent = messages.length + (messages.length === 1 ? " message" : " messages");
