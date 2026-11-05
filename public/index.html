@@ -23,8 +23,8 @@
 
   <div id="app" class="app hidden">
     <aside class="sidebar">
-      <div class="brand"><div class="brand-mark small">M</div><span>mailbox</span></div>
-      <div class="side-label">WORKSPACE</div>
+      <div class="brand"><div class="brand-mark small">M</div><span>mailbox</span><span class="brand-status"><i></i> PRIVATE</span><div class="mobile-tools"><button id="mobile-add-domain" aria-label="Add domain">＋</button><button id="mobile-add-mailbox" aria-label="Create inbox">✉</button><button id="mobile-logout" aria-label="Sign out">↗</button></div></div>
+      <div class="side-label">DOMAINS <span class="section-note">WORKSPACE</span></div>
       <div id="domain-list" class="domain-list"></div>
       <button id="add-domain" class="quiet-button">＋ Add domain</button>
       <div class="side-divider"></div>
@@ -37,9 +37,8 @@
     </aside>
 
     <section class="main">
-      <div class="mobile-switcher"><label><span>DOMAIN</span><select id="mobile-domain"><option value="">All domains</option></select></label><label><span>INBOX</span><select id="mobile-mailbox"><option value="">Choose an inbox</option></select></label></div>
       <header class="topbar">
-        <div><p class="eyebrow">YOUR MAIL</p><h1 id="current-title">Select an inbox</h1></div>
+        <div><p class="eyebrow">MAILBOX <span class="live-indicator">● LIVE</span></p><h1 id="current-title">Select an inbox</h1></div>
         <div class="top-actions"><input id="search" class="search" placeholder="Search messages…" type="search"><button id="refresh" class="secondary">Refresh</button></div>
       </header>
       <div id="empty-state" class="empty-state">
