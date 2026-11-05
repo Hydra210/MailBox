@@ -37,6 +37,8 @@ function renderDomains() {
     '<button class="domain-item ' + (selectedDomain === d.id ? "active" : "") + '" data-domain="' + d.id + '"><span>⌁ ' + escapeHtml(d.name) + '</span><span class="count">' + d.mailbox_count + '</span></button>'
   ).join("");
   $("#mailbox-domain").innerHTML = domains.map(d => '<option value="' + escapeHtml(d.name) + '">' + escapeHtml(d.name) + '</option>').join("");
+  const mobileDomain = $("#mobile-domain");
+  if (mobileDomain) { mobileDomain.innerHTML = '<option value="">All domains</option>' + domains.map(d => '<option value="' + escapeHtml(d.id) + '">' + escapeHtml(d.name) + '</option>').join(""); mobileDomain.value = selectedDomain || ""; }
   $("#domain-list").querySelectorAll("[data-domain]").forEach(btn => btn.onclick = async () => {
     selectedDomain = btn.dataset.domain; selectedMailbox = null; selectedMessage = null;
     renderDomains(); await loadMailboxes();
@@ -54,6 +56,8 @@ function renderMailboxes() {
   $("#mailbox-list").innerHTML = mailboxes.map(m =>
     '<button class="mailbox-item ' + (selectedMailbox === m.id ? "active" : "") + '" data-mailbox="' + m.id + '"><span>✉ ' + escapeHtml(m.local_part + "@" + m.domain) + '</span><span class="count">' + (m.unread_count || "") + '</span></button>'
   ).join("");
+  const mobileMailbox = $("#mobile-mailbox");
+  if (mobileMailbox) { mobileMailbox.innerHTML = '<option value="">Choose an inbox</option>' + mailboxes.map(m => '<option value="' + escapeHtml(m.id) + '">' + escapeHtml(m.local_part + "@" + m.domain) + '</option>').join(""); mobileMailbox.value = selectedMailbox || ""; }
   $("#mailbox-list").querySelectorAll("[data-mailbox]").forEach(btn => btn.onclick = async () => {
     selectedMailbox = btn.dataset.mailbox; selectedMessage = null;
     renderMailboxes(); await loadMessages();
@@ -79,11 +83,14 @@ async function openMessage(id) {
   selectedMessage = id;
   const m = await api("/api/messages/" + id + "?mailbox=" + encodeURIComponent(selectedMailbox));
   $("#message-panel").innerHTML =
-    '<div class="message-head"><h2>' + escapeHtml(m.subject) + '</h2>' +
+    '<div class="message-head"><button class="mobile-back" id="back-to-messages">← All messages</button><h2>' + escapeHtml(m.subject) + '</h2>' +
     '<p class="meta">From: ' + escapeHtml(m.sender) + '</p><p class="meta">To: ' + escapeHtml(m.recipient) + '</p><p class="meta">' + niceDate(m.received_at) + '</p>' +
     '<div class="message-actions"><button class="tiny-button" id="delete-message">Delete</button><button class="tiny-button" id="refresh-message">Refresh</button></div></div>' +
     '<div class="attachments">' + (m.attachments || []).map(a => '<a class="attachment" href="/api/messages/' + id + '/attachments/' + a.index + '?mailbox=' + encodeURIComponent(selectedMailbox) + '">↓ ' + escapeHtml(a.filename) + '</a>').join("") + '</div>' +
     '<div class="message-body">' + (m.text_body ? escapeHtml(m.text_body) : (m.html_body ? '<iframe sandbox="" referrerpolicy="no-referrer" title="Email content" srcdoc="' + escapeHtml(m.html_body) + '"></iframe>' : "No message content.")) + '</div>';
+  const backButton = $("#back-to-messages");
+  if (backButton) backButton.onclick = () => $("#inbox-view").classList.remove("reading");
+  $("#inbox-view").classList.add("reading");
   $("#delete-message").onclick = async () => { await api("/api/messages/" + id + "?mailbox=" + encodeURIComponent(selectedMailbox), { method:"DELETE" }); selectedMessage = null; await loadMessages(); toast("Message deleted"); };
   $("#refresh-message").onclick = () => openMessage(id);
   await loadMessagesKeepMessage();
@@ -137,6 +144,8 @@ $("#mailbox-form").addEventListener("submit", async e => {
   } catch (err) { $("#mailbox-error").textContent = err.message; }
 });
 $("#refresh").onclick = async () => { await loadDomains(); toast("Inbox refreshed"); };
+$("#mobile-domain").addEventListener("change", async e => { selectedDomain = e.target.value || null; selectedMailbox = null; selectedMessage = null; renderDomains(); await loadMailboxes(); });
+$("#mobile-mailbox").addEventListener("change", async e => { selectedMailbox = e.target.value || null; selectedMessage = null; renderMailboxes(); if (selectedMailbox) await loadMessages(); else { $("#inbox-view").classList.remove("reading"); $("#inbox-view").classList.add("hidden"); $("#empty-state").classList.remove("hidden"); } });
 let searchTimer;
 $("#search").addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { if (selectedMailbox) { selectedMessage = null; loadMessages(); } }, 250); });
 boot();
