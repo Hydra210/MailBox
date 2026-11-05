@@ -1,4 +1,4 @@
-name = "mailbox-email-ingress"
+name = "mailbox-email-worker"
 main = "src/index.js"
 compatibility_date = "2026-11-05"
 
