@@ -24,5 +24,3 @@ services:
         generateValue: true
       - key: ADMIN_PASSWORD_HASH
         sync: false
-      - key: APP_ORIGIN
-        value: https://mailbox.onrender.com
