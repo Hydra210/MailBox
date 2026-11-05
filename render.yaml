@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: mailbox
+    runtime: node
+    plan: free
+    region: ohio
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mailbox-db
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: INBOUND_SECRET
+        generateValue: true
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: APP_ORIGIN
+        value: https://mailbox.onrender.com
+
+databases:
+  - name: mailbox-db
+    databaseName: mailbox
+    user: mailbox
+    plan: free
+    region: ohio
