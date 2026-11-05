@@ -26,7 +26,7 @@ for (const key of required) {
 }
 
 app.set("trust proxy", 1);
-app.use(helmet({ contentSecurityPolicy: false }));
+app.use(helmet());
 app.use(cookieParser());
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(path.join(__dirname, "public"), { etag: true, maxAge: "1h" }));
@@ -132,7 +132,7 @@ app.post("/api/inbound", express.raw({ type: "*/*", limit: "26mb" }), async (req
       "SELECT m.id FROM mailboxes m JOIN domains d ON d.id=m.domain_id WHERE d.name=$1 AND m.local_part=$2",
       [domain, local]
     );
-    if (!found.rowCount) return res.status(202).send("Recipient is not configured");
+    if (!found.rowCount) return res.status(404).send("Recipient is not configured");
     const attachments = (parsed.attachments || []).map((a) => ({
       filename: String(a.filename || "attachment").slice(0, 180),
       contentType: a.contentType || "application/octet-stream",
