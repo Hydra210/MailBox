@@ -37,8 +37,6 @@ function renderDomains() {
     '<button class="domain-item ' + (selectedDomain === d.id ? "active" : "") + '" data-domain="' + d.id + '"><span>⌁ ' + escapeHtml(d.name) + '</span><span class="count">' + d.mailbox_count + '</span></button>'
   ).join("");
   $("#mailbox-domain").innerHTML = domains.map(d => '<option value="' + escapeHtml(d.name) + '">' + escapeHtml(d.name) + '</option>').join("");
-  const mobileDomain = $("#mobile-domain");
-  if (mobileDomain) { mobileDomain.innerHTML = '<option value="">All domains</option>' + domains.map(d => '<option value="' + escapeHtml(d.id) + '">' + escapeHtml(d.name) + '</option>').join(""); mobileDomain.value = selectedDomain || ""; }
   $("#domain-list").querySelectorAll("[data-domain]").forEach(btn => btn.onclick = async () => {
     selectedDomain = btn.dataset.domain; selectedMailbox = null; selectedMessage = null;
     renderDomains(); await loadMailboxes();
@@ -56,8 +54,6 @@ function renderMailboxes() {
   $("#mailbox-list").innerHTML = mailboxes.map(m =>
     '<button class="mailbox-item ' + (selectedMailbox === m.id ? "active" : "") + '" data-mailbox="' + m.id + '"><span>✉ ' + escapeHtml(m.local_part + "@" + m.domain) + '</span><span class="count">' + (m.unread_count || "") + '</span></button>'
   ).join("");
-  const mobileMailbox = $("#mobile-mailbox");
-  if (mobileMailbox) { mobileMailbox.innerHTML = '<option value="">Choose an inbox</option>' + mailboxes.map(m => '<option value="' + escapeHtml(m.id) + '">' + escapeHtml(m.local_part + "@" + m.domain) + '</option>').join(""); mobileMailbox.value = selectedMailbox || ""; }
   $("#mailbox-list").querySelectorAll("[data-mailbox]").forEach(btn => btn.onclick = async () => {
     selectedMailbox = btn.dataset.mailbox; selectedMessage = null;
     renderMailboxes(); await loadMessages();
@@ -144,8 +140,10 @@ $("#mailbox-form").addEventListener("submit", async e => {
   } catch (err) { $("#mailbox-error").textContent = err.message; }
 });
 $("#refresh").onclick = async () => { await loadDomains(); toast("Inbox refreshed"); };
-$("#mobile-domain").addEventListener("change", async e => { selectedDomain = e.target.value || null; selectedMailbox = null; selectedMessage = null; renderDomains(); await loadMailboxes(); });
-$("#mobile-mailbox").addEventListener("change", async e => { selectedMailbox = e.target.value || null; selectedMessage = null; renderMailboxes(); if (selectedMailbox) await loadMessages(); else { $("#inbox-view").classList.remove("reading"); $("#inbox-view").classList.add("hidden"); $("#empty-state").classList.remove("hidden"); } });
 let searchTimer;
 $("#search").addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { if (selectedMailbox) { selectedMessage = null; loadMessages(); } }, 250); });
 boot();
+
+$("#mobile-add-domain").onclick = () => $("#add-domain").click();
+$("#mobile-add-mailbox").onclick = () => $("#add-mailbox").click();
+$("#mobile-logout").onclick = () => $("#logout").click();
