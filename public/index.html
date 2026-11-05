@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <title>Mailbox</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main id="login" class="login-wrap hidden">
+    <form id="login-form" class="login-card">
+      <div class="brand-mark">M</div>
+      <p class="eyebrow">PRIVATE MAIL SYSTEM</p>
+      <h1>Welcome back.</h1>
+      <p class="muted">Sign in to access your inboxes.</p>
+      <label for="password">Admin password</label>
+      <input id="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+      <button class="primary full" type="submit">Sign in</button>
+      <p id="login-error" class="error"></p>
+    </form>
+  </main>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark small">M</div><span>mailbox</span></div>
+      <div class="side-label">WORKSPACE</div>
+      <div id="domain-list" class="domain-list"></div>
+      <button id="add-domain" class="quiet-button">＋ Add domain</button>
+      <div class="side-divider"></div>
+      <div class="side-label row-between"><span>INBOXES</span><button id="add-mailbox" class="icon-button" title="Create inbox">＋</button></div>
+      <div id="mailbox-list" class="mailbox-list"></div>
+      <div class="sidebar-bottom">
+        <div class="status-dot"></div><span>Inbound only</span>
+        <button id="logout" class="logout">Sign out</button>
+      </div>
+    </aside>
+
+    <section class="main">
+      <header class="topbar">
+        <div><p class="eyebrow">YOUR MAIL</p><h1 id="current-title">Select an inbox</h1></div>
+        <div class="top-actions"><input id="search" class="search" placeholder="Search messages…" type="search"><button id="refresh" class="secondary">Refresh</button></div>
+      </header>
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon">✉</div>
+        <h2>Your inbox, your domains.</h2>
+        <p>Add a domain, create an address, then point its Cloudflare email route to this app.</p>
+      </div>
+      <div id="inbox-view" class="inbox-view hidden">
+        <div class="message-layout">
+          <section class="message-list-panel">
+            <div class="list-heading"><span>Messages</span><span id="message-count" class="muted small-text"></span></div>
+            <div id="message-list" class="message-list"></div>
+          </section>
+          <section id="message-panel" class="message-panel">
+            <div class="message-placeholder">Select a message to read it.</div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <dialog id="domain-dialog" class="dialog">
+    <form id="domain-form" method="dialog">
+      <div class="dialog-head"><h2>Add a domain</h2><button class="icon-button" value="cancel" formnovalidate>×</button></div>
+      <p class="muted">Add a domain you own and manage through Cloudflare.</p>
+      <label for="domain-name">Domain name</label><input id="domain-name" placeholder="example.com" required>
+      <div class="dialog-actions"><button class="secondary" value="cancel">Cancel</button><button class="primary" type="submit">Add domain</button></div>
+      <p id="domain-error" class="error"></p>
+    </form>
+  </dialog>
+
+  <dialog id="mailbox-dialog" class="dialog">
+    <form id="mailbox-form" method="dialog">
+      <div class="dialog-head"><h2>Create inboxes</h2><button class="icon-button" value="cancel" formnovalidate>×</button></div>
+      <label for="mailbox-domain">Domain</label><select id="mailbox-domain" required></select>
+      <div class="form-tabs"><button type="button" class="tab active" data-tab="single">One address</button><button type="button" class="tab" data-tab="bulk">Numbered batch</button></div>
+      <div id="single-fields"><label for="local-part">Address name</label><input id="local-part" placeholder="hello" autocomplete="off"></div>
+      <div id="bulk-fields" class="hidden"><div class="two-fields"><div><label for="bulk-start">Start at</label><input id="bulk-start" type="number" min="1" value="1"></div><div><label for="bulk-count">How many</label><input id="bulk-count" type="number" min="1" max="100" value="10"></div></div><p class="hint">Creates numbered inboxes, up to 100 per batch.</p></div>
+      <div class="dialog-actions"><button class="secondary" value="cancel">Cancel</button><button class="primary" type="submit">Create</button></div>
+      <p id="mailbox-error" class="error"></p>
+    </form>
+  </dialog>
+  <div id="toast" class="toast"></div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
