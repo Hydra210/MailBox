@@ -82,7 +82,7 @@ async function openMessage(id) {
     '<div class="message-head"><h2>' + escapeHtml(m.subject) + '</h2>' +
     '<p class="meta">From: ' + escapeHtml(m.sender) + '</p><p class="meta">To: ' + escapeHtml(m.recipient) + '</p><p class="meta">' + niceDate(m.received_at) + '</p>' +
     '<div class="message-actions"><button class="tiny-button" id="delete-message">Delete</button><button class="tiny-button" id="refresh-message">Refresh</button></div></div>' +
-    '<div class="attachments">' + (m.attachments || []).map(a => '<a class="attachment" href="/api/messages/' + id + '/attachments/' + a.index + '">↓ ' + escapeHtml(a.filename) + '</a>').join("") + '</div>' +
+    '<div class="attachments">' + (m.attachments || []).map(a => '<a class="attachment" href="/api/messages/' + id + '/attachments/' + a.index + '?mailbox=' + encodeURIComponent(selectedMailbox) + '">↓ ' + escapeHtml(a.filename) + '</a>').join("") + '</div>' +
     '<div class="message-body">' + (m.text_body ? escapeHtml(m.text_body) : (m.html_body ? '<iframe sandbox="" referrerpolicy="no-referrer" title="Email content" srcdoc="' + escapeHtml(m.html_body) + '"></iframe>' : "No message content.")) + '</div>';
   $("#delete-message").onclick = async () => { await api("/api/messages/" + id + "?mailbox=" + encodeURIComponent(selectedMailbox), { method:"DELETE" }); selectedMessage = null; await loadMessages(); toast("Message deleted"); };
   $("#refresh-message").onclick = () => openMessage(id);
@@ -90,7 +90,7 @@ async function openMessage(id) {
 }
 async function loadMessagesKeepMessage() {
   const q = $("#search").value.trim();
-  const messages = await api("/api/messages?mailbox=" + selectedMailbox + "&q=" + encodeURIComponent(q));
+  const messages = await api("/api/messages?mailbox=" + encodeURIComponent(selectedMailbox) + "&q=" + encodeURIComponent(q));
   $("#message-count").textContent = messages.length + (messages.length === 1 ? " message" : " messages");
   $("#message-list").innerHTML = messages.map(m =>
     '<button class="message-row ' + (!m.is_read ? "unread " : "") + (selectedMessage === m.id ? "active" : "") + '" data-message="' + m.id + '">' +
