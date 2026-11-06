@@ -168,3 +168,88 @@ boot();
 $("#mobile-add-domain").onclick = () => $("#add-domain").click();
 $("#mobile-add-mailbox").onclick = () => $("#add-mailbox").click();
 $("#mobile-logout").onclick = () => $("#logout").click();
+
+
+// GroqCloud signup assistant: one address at a time, with user-controlled submission.
+const GROQ_SIGNUP_URL = "https://console.groq.com/login";
+let groqQueue = [], groqIndex = 0, groqBatchActive = false;
+function groqAddress(m) { return m.local_part + "@" + m.domain; }
+function renderGroqOptions() {
+  const list = $("#groq-mailbox-options");
+  list.innerHTML = mailboxes.map(m => {
+    const address = groqAddress(m);
+    return '<label class="groq-option"><input type="checkbox" class="groq-choice" value="' + escapeHtml(m.id) + '" checked><span>' + escapeHtml(address) + '</span></label>';
+  }).join("") || '<p class="muted">No inboxes available.</p>';
+  list.querySelectorAll(".groq-choice").forEach(input => input.addEventListener("change", updateGroqSelection));
+  $("#groq-select-all").checked = mailboxes.length > 0;
+  updateGroqSelection();
+}
+function updateGroqSelection() {
+  const choices = [...document.querySelectorAll(".groq-choice")];
+  const selected = choices.filter(c => c.checked).length;
+  $("#groq-selected-count").textContent = selected + " selected";
+  $("#groq-select-all").checked = choices.length > 0 && selected === choices.length;
+  $("#groq-select-all").indeterminate = selected > 0 && selected < choices.length;
+}
+$("#groq-select-all").addEventListener("change", () => {
+  document.querySelectorAll(".groq-choice").forEach(c => c.checked = $("#groq-select-all").checked);
+  updateGroqSelection();
+});
+$("#groq-batch").addEventListener("click", async () => {
+  try {
+    const allMailboxes = await api("/api/mailboxes");
+    const previous = mailboxes;
+    mailboxes = allMailboxes;
+    renderGroqOptions();
+    mailboxes = previous;
+    groqQueue = []; groqIndex = 0; groqBatchActive = false;
+    $("#groq-progress").classList.add("hidden");
+    $("#groq-start").classList.remove("hidden");
+    $("#groq-next").classList.add("hidden");
+    $("#groq-note").textContent = "This assistant does not submit registrations or bypass verification. You complete each signup manually.";
+    $("#groq-dialog").showModal();
+  } catch (err) { toast(err.message); }
+});
+$("#groq-close").addEventListener("click", () => $("#groq-dialog").close());
+async function copyGroqAddress(address) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(address);
+  const field = document.createElement("textarea");
+  field.value = address; field.style.position = "fixed"; field.style.opacity = "0";
+  document.body.appendChild(field); field.select();
+  const copied = document.execCommand("copy"); field.remove();
+  if (!copied) throw new Error("Clipboard unavailable");
+}
+function launchGroqStep() {
+  const m = groqQueue[groqIndex];
+  if (!m) return;
+  const address = groqAddress(m);
+  const tab = window.open(GROQ_SIGNUP_URL, "_blank", "noopener");
+  copyGroqAddress(address).then(() => toast("Copied " + address)).catch(() => toast("Copy this address: " + address));
+  $("#groq-progress").textContent = "Address " + (groqIndex + 1) + " of " + groqQueue.length + ": " + address;
+  $("#groq-progress").classList.remove("hidden");
+  $("#groq-start").classList.add("hidden");
+  $("#groq-next").classList.remove("hidden");
+  $("#groq-next").textContent = groqIndex + 1 >= groqQueue.length ? "Finish batch" : "Next address";
+  if (!tab) $("#groq-note").textContent = "Your browser blocked the new tab. Allow pop-ups for MailBox, then press Next address to continue.";
+}
+$("#groq-start").addEventListener("click", () => {
+  const ids = [...document.querySelectorAll(".groq-choice:checked")].map(c => c.value);
+  groqQueue = ids.map(id => mailboxes.find(m => m.id === id)).filter(Boolean);
+  if (!groqQueue.length) { toast("Select at least one inbox"); return; }
+  groqIndex = 0; groqBatchActive = true; launchGroqStep();
+});
+$("#groq-next").addEventListener("click", () => {
+  if (!groqBatchActive) return;
+  groqIndex++;
+  if (groqIndex >= groqQueue.length) {
+    groqBatchActive = false;
+    $("#groq-progress").textContent = "Batch complete · " + groqQueue.length + " addresses processed.";
+    $("#groq-next").classList.add("hidden");
+    $("#groq-start").classList.remove("hidden");
+    $("#groq-start").textContent = "Start another batch";
+    $("#groq-note").textContent = "Check MailBox for verification emails. Each account's signup and verification must be completed according to GroqCloud's requirements.";
+    toast("Batch complete");
+    return;
+  }
+  launchGroqStep();
+});
