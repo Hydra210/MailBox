@@ -24,7 +24,7 @@ app.set("trust proxy", 1);
 app.use(helmet());
 app.use(cookieParser());
 app.use(express.json({ limit: "1mb" }));
-app.use(express.static(path.join(__dirname, "public"), { etag: true, maxAge: "1h" }));
+app.use(express.static(path.join(__dirname, "public"), { etag: true, maxAge: 0, setHeaders: (res) => res.setHeader("Cache-Control", "no-cache, must-revalidate") }));
 
 const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: true, legacyHeaders: false });
 const apiLimiter = rateLimit({ windowMs: 60 * 1000, limit: 180, standardHeaders: true, legacyHeaders: false });
@@ -323,5 +323,5 @@ app.post("/api/messages/:id/read", async (req, res) => {
   } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
-app.use((_req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+app.use((_req, res) => { res.setHeader("Cache-Control", "no-cache, must-revalidate"); res.sendFile(path.join(__dirname, "public", "index.html")); });
 app.listen(PORT, "0.0.0.0", () => console.log("Mailbox listening on port " + PORT));
