@@ -275,6 +275,22 @@ app.get("/api/messages/:id", async (req, res) => {
     const key = messagesPrefix(domain, local) + req.params.id + ".json";
     const message = await store.getJson(key);
     if (!message) return res.status(404).json({ error: "Message not found." });
+    // Rebuild the HTML from the original RFC 5322 message so older emails
+    // stored before CSS preservation also get their full sanitized HTML view.
+    if (message.rawKey) {
+      const rawMessage = await store.getBuffer(message.rawKey);
+      if (rawMessage) {
+        const original = await simpleParser(rawMessage);
+        if (original.html) {
+          message.html_body = sanitizeHtml(String(original.html), {
+            allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2", "u", "style", "hr", "table", "thead", "tbody", "tr", "td", "th"]),
+            allowedAttributes: { a: ["href", "name", "target"], img: ["src", "alt", "width", "height"], table: ["width", "border", "cellpadding", "cellspacing"], td: ["width", "colspan", "rowspan", "align", "valign"], th: ["width", "colspan", "rowspan", "align", "valign"], "*": ["style", "class", "align", "valign", "width", "height"] },
+            allowedSchemes: ["http", "https", "mailto", "cid", "data"],
+            disallowedTagsMode: "discard"
+          }).slice(0, 1000000);
+        }
+      }
+    }
     message.is_read = true;
     await store.putJson(key, message);
     res.json({ ...message, attachments: (message.attachments || []).map((a,index) => ({
