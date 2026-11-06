@@ -51,12 +51,32 @@ async function loadMailboxes() {
   else { $("#inbox-view").classList.add("hidden"); $("#empty-state").classList.remove("hidden"); }
 }
 function renderMailboxes() {
-  $("#mailbox-list").innerHTML = mailboxes.map(m =>
-    '<button class="mailbox-item ' + (selectedMailbox === m.id ? "active" : "") + '" data-mailbox="' + m.id + '"><span>✉ ' + escapeHtml(m.local_part + "@" + m.domain) + '</span><span class="count">' + (m.unread_count || "") + '</span></button>'
-  ).join("");
+  $("#mailbox-list").innerHTML = mailboxes.map(m => {
+    const address = m.local_part + "@" + m.domain;
+    return '<div class="mailbox-item-wrap ' + (selectedMailbox === m.id ? "active" : "") + '">' +
+      '<button class="mailbox-item" data-mailbox="' + m.id + '" title="' + escapeHtml(address) + '">' +
+      '<span class="mailbox-address"><span class="mailbox-symbol">✉</span><span class="mailbox-address-text">' + escapeHtml(address) + '</span></span>' +
+      (m.unread_count ? '<span class="count">' + m.unread_count + '</span>' : '') +
+      '</button><button class="copy-address" data-copy-address="' + escapeHtml(address) + '" aria-label="Copy ' + escapeHtml(address) + '" title="Copy email address">▢</button></div>';
+  }).join("");
   $("#mailbox-list").querySelectorAll("[data-mailbox]").forEach(btn => btn.onclick = async () => {
     selectedMailbox = btn.dataset.mailbox; selectedMessage = null;
     renderMailboxes(); await loadMessages();
+  });
+  $("#mailbox-list").querySelectorAll("[data-copy-address]").forEach(btn => btn.onclick = async e => {
+    e.stopPropagation();
+    const address = btn.dataset.copyAddress;
+    try {
+      if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(address);
+      else {
+        const field = document.createElement("textarea");
+        field.value = address; field.style.position = "fixed"; field.style.opacity = "0";
+        document.body.appendChild(field); field.select();
+        const copied = document.execCommand("copy"); field.remove();
+        if (!copied) throw new Error("Clipboard unavailable");
+      }
+      toast("Copied " + address);
+    } catch { toast("Couldn't copy address"); }
   });
 }
 async function loadMessages() {
