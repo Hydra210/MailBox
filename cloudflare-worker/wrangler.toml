@@ -2,6 +2,7 @@ name = "mailbox-email-worker"
 main = "src/index.js"
 compatibility_date = "2026-11-05"
 
-# Set these as Worker secrets/vars in the Cloudflare dashboard:
-# MAILBOX_INGEST_URL = https://YOUR-RENDER-SERVICE.onrender.com/api/inbound
-# MAILBOX_INBOUND_SECRET = same value as Render's INBOUND_SECRET
+[vars]
+MAILBOX_INGEST_URL = "https://mailbox-q581.onrender.com/api/inbound"
+
+# Keep MAILBOX_INBOUND_SECRET configured as a Worker secret in Cloudflare.
