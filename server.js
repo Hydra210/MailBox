@@ -137,9 +137,9 @@ app.post("/api/inbound", express.raw({ type: "*/*", limit: "26mb" }), async (req
       recipient, subject: String(parsed.subject || "(no subject)").slice(0, 998),
       text_body: String(parsed.text || "").slice(0, 1000000),
       html_body: sanitizeHtml(String(parsed.html || ""), {
-        allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2", "u"]),
-        allowedAttributes: { a: ["href", "name", "target"], img: ["src", "alt", "width", "height"], "*": ["style"] },
-        allowedSchemes: ["http", "https", "mailto", "cid"],
+        allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2", "u", "style", "hr", "table", "thead", "tbody", "tr", "td", "th"]),
+        allowedAttributes: { a: ["href", "name", "target"], img: ["src", "alt", "width", "height"], table: ["width", "border", "cellpadding", "cellspacing"], td: ["width", "colspan", "rowspan", "align", "valign"], th: ["width", "colspan", "rowspan", "align", "valign"], "*": ["style", "class", "align", "valign", "width", "height"] },
+        allowedSchemes: ["http", "https", "mailto", "cid", "data"],
         disallowedTagsMode: "discard"
       }).slice(0, 1000000),
       received_at: receivedAt, is_read: false, attachments, rawKey
