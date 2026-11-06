@@ -208,3 +208,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text"
  .message-row{border-radius:14px;border-color:#292a31;background:rgba(19,20,24,.9);box-shadow:0 2px 8px #00000012}
  .topbar h1{font-weight:650}
 }
+
+
+.groq-dialog{max-height:min(82vh,760px);overflow:auto}
+.groq-dialog>p{line-height:1.65;margin:0}
+.groq-selection-head{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px}
+.groq-selection-head label{display:flex;align-items:center;gap:8px;color:#dedee2}
+.groq-mailbox-options{display:grid;gap:6px;max-height:260px;overflow:auto;padding:2px}
+.groq-option{display:flex;align-items:center;gap:10px;padding:10px 11px;background:#17171b;border:1px solid #29292f;border-radius:10px;min-width:0}
+.groq-option span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e8e8eb;font-size:12px}
+.groq-option input,.groq-selection-head input{accent-color:#fff;flex:none}
+.groq-progress{padding:12px;background:#202020;border:1px solid #555;border-radius:10px;color:#fff;font-size:12px;overflow-wrap:anywhere}
+#groq-note{margin-top:0}
+@media(max-width:600px){.top-actions{flex-wrap:wrap;justify-content:flex-end}.top-actions #groq-batch{font-size:0;width:40px;height:40px;padding:0;position:relative}.top-actions #groq-batch:after{content:"G";font-size:15px;font-weight:750}.groq-dialog{max-height:88dvh}.groq-mailbox-options{max-height:34dvh}}
