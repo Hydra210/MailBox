@@ -172,7 +172,7 @@ $("#mobile-logout").onclick = () => $("#logout").click();
 
 // GroqCloud signup assistant: one address at a time, with user-controlled submission.
 const GROQ_SIGNUP_URL = "https://console.groq.com/login";
-let groqQueue = [], groqIndex = 0, groqBatchActive = false;
+let groqQueue = [], groqAvailableMailboxes = [], groqIndex = 0, groqBatchActive = false;
 function groqAddress(m) { return m.local_part + "@" + m.domain; }
 function renderGroqOptions() {
   const list = $("#groq-mailbox-options");
@@ -197,9 +197,9 @@ $("#groq-select-all").addEventListener("change", () => {
 });
 $("#groq-batch").addEventListener("click", async () => {
   try {
-    const allMailboxes = await api("/api/mailboxes");
+    groqAvailableMailboxes = await api("/api/mailboxes");
     const previous = mailboxes;
-    mailboxes = allMailboxes;
+    mailboxes = groqAvailableMailboxes;
     renderGroqOptions();
     mailboxes = previous;
     groqQueue = []; groqIndex = 0; groqBatchActive = false;
@@ -234,7 +234,7 @@ function launchGroqStep() {
 }
 $("#groq-start").addEventListener("click", () => {
   const ids = [...document.querySelectorAll(".groq-choice:checked")].map(c => c.value);
-  groqQueue = ids.map(id => mailboxes.find(m => m.id === id)).filter(Boolean);
+  groqQueue = ids.map(id => groqAvailableMailboxes.find(m => m.id === id)).filter(Boolean);
   if (!groqQueue.length) { toast("Select at least one inbox"); return; }
   groqIndex = 0; groqBatchActive = true; launchGroqStep();
 });
