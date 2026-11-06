@@ -96,6 +96,10 @@ async function loadMessages() {
   $("#message-list").querySelectorAll("[data-message]").forEach(btn => btn.onclick = () => openMessage(Number(btn.dataset.message)));
   if (!selectedMessage) $("#message-panel").innerHTML = '<div class="message-placeholder">Select a message to read it.</div>';
 }
+function renderEmailHtml(html) {
+  const safeDocument = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; img-src data: cid:; style-src \'unsafe-inline\'; font-src data:; media-src data:; form-action \'none\'; base-uri \'none\'"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>' + html + '</body></html>';
+  return '<iframe class="email-frame" sandbox="" referrerpolicy="no-referrer" title="Email content" srcdoc="' + escapeHtml(safeDocument) + '"></iframe>';
+}
 async function openMessage(id) {
   selectedMessage = id;
   const m = await api("/api/messages/" + id + "?mailbox=" + encodeURIComponent(selectedMailbox));
@@ -104,7 +108,19 @@ async function openMessage(id) {
     '<p class="meta">From: ' + escapeHtml(m.sender) + '</p><p class="meta">To: ' + escapeHtml(m.recipient) + '</p><p class="meta">' + niceDate(m.received_at) + '</p>' +
     '<div class="message-actions"><button class="tiny-button" id="delete-message">Delete</button><button class="tiny-button" id="refresh-message">Refresh</button></div></div>' +
     '<div class="attachments">' + (m.attachments || []).map(a => '<a class="attachment" href="/api/messages/' + id + '/attachments/' + a.index + '?mailbox=' + encodeURIComponent(selectedMailbox) + '">↓ ' + escapeHtml(a.filename) + '</a>').join("") + '</div>' +
-    '<div class="message-body">' + (m.text_body ? escapeHtml(m.text_body) : (m.html_body ? '<iframe sandbox="" referrerpolicy="no-referrer" title="Email content" srcdoc="' + escapeHtml(m.html_body) + '"></iframe>' : "No message content.")) + '</div>';
+    (m.html_body ? '<div class="email-view-tools"><button class="tiny-button active" id="email-rendered">Email view</button><button class="tiny-button" id="email-plain">Plain text</button><button class="tiny-button" id="email-source">HTML + CSS</button><span class="email-safety-note">Scripts and remote content are blocked</span></div>' : '') +
+    '<div class="message-body" id="email-content">' + (m.html_body ? renderEmailHtml(m.html_body) : (m.text_body ? '<pre class="plain-email">' + escapeHtml(m.text_body) + '</pre>' : "No message content.")) + '</div>';
+  const emailContent = $("#email-content");
+  const emailButtons = ["#email-rendered", "#email-plain", "#email-source"].map(selector => $(selector)).filter(Boolean);
+  function setEmailMode(mode) {
+    emailButtons.forEach(button => button.classList.toggle("active", button.id === "email-" + mode));
+    if (mode === "rendered") emailContent.innerHTML = renderEmailHtml(m.html_body);
+    else if (mode === "plain") emailContent.innerHTML = '<pre class="plain-email">' + escapeHtml(m.text_body || "No plain-text version was included.") + '</pre>';
+    else emailContent.innerHTML = '<pre class="html-source">' + escapeHtml(m.html_body || "") + '</pre>';
+  }
+  if ($("#email-rendered")) $("#email-rendered").onclick = () => setEmailMode("rendered");
+  if ($("#email-plain")) $("#email-plain").onclick = () => setEmailMode("plain");
+  if ($("#email-source")) $("#email-source").onclick = () => setEmailMode("source");
   const backButton = $("#back-to-messages");
   if (backButton) backButton.onclick = () => $("#inbox-view").classList.remove("reading");
   $("#inbox-view").classList.add("reading");
