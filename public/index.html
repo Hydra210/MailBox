@@ -39,7 +39,7 @@
     <section class="main">
       <header class="topbar">
         <div><p class="eyebrow">MAILBOX <span class="live-indicator">● LIVE</span></p><h1 id="current-title">Select an inbox</h1></div>
-        <div class="top-actions"><input id="search" class="search" placeholder="Search messages…" type="search"><button id="refresh" class="secondary">Refresh</button></div>
+        <div class="top-actions"><input id="search" class="search" placeholder="Search messages…" type="search"><button id="groq-batch" class="secondary">GroqCloud setup</button><button id="refresh" class="secondary">Refresh</button></div>
       </header>
       <div id="empty-state" class="empty-state">
         <div class="empty-icon">✉</div>
@@ -80,6 +80,15 @@
       <div class="dialog-actions"><button class="secondary" value="cancel">Cancel</button><button class="primary" type="submit">Create</button></div>
       <p id="mailbox-error" class="error"></p>
     </form>
+  </dialog>
+  <dialog id="groq-dialog" class="dialog groq-dialog">
+    <div class="dialog-head"><h2>GroqCloud signup assistant</h2><button id="groq-close" class="icon-button" type="button">×</button></div>
+    <p class="muted">Choose the inboxes you want to use. Each step copies one address and opens GroqCloud's official signup page. Submit the form yourself, then move to the next address.</p>
+    <div class="groq-selection-head"><label><input id="groq-select-all" type="checkbox" checked> Select all inboxes</label><span id="groq-selected-count" class="muted small-text"></span></div>
+    <div id="groq-mailbox-options" class="groq-mailbox-options"></div>
+    <div id="groq-progress" class="groq-progress hidden"></div>
+    <div class="dialog-actions"><button id="groq-start" class="primary" type="button">Start batch</button><button id="groq-next" class="primary hidden" type="button">Next address</button></div>
+    <p id="groq-note" class="hint">This assistant does not submit registrations or bypass verification. You complete each signup manually.</p>
   </dialog>
   <div id="toast" class="toast"></div>
   <script src="/app.js" defer></script>
