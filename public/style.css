@@ -165,3 +165,46 @@ input::placeholder{color:#77747f}
  .sidebar-bottom{display:none}
 }
 @media(min-width:601px){.mobile-back{display:none}}
+
+/* Apple-inspired refinement */
+:root{--bg:#08090b;--surface:#111216;--surface-2:#17181d;--surface-3:#202127;--line:#292a31;--pink:#f0b6d7;--pink-strong:#ffd9ec}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",sans-serif;letter-spacing:-.012em}
+.sidebar{background:rgba(12,13,16,.96);border-color:#25262d}
+.brand-mark{background:linear-gradient(145deg,#ffe0ef,#eaa9cf);box-shadow:0 4px 18px #ed9bc51c}
+.main{background:radial-gradient(ellipse at 75% -20%,#25202a55 0,transparent 42%)}
+.topbar{border-color:#292a30}
+.topbar h1{font-weight:650;letter-spacing:-.055em}
+.primary,.secondary,.quiet-button,.icon-button,.domain-item,.mailbox-item-wrap,.message-list-panel,.message-panel,.dialog,.login-card{transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease}
+.primary{box-shadow:0 1px 0 #fff2 inset,0 5px 15px #e9a4ce18}
+.search,input,select{background:#15161a;border-color:#303139;border-radius:12px}
+.message-list-panel,.message-panel{background:rgba(17,18,22,.88);border-color:#292a31;border-radius:18px;box-shadow:0 12px 36px #00000012}
+.message-row{padding:16px 17px}
+.message-row:hover,.message-row.active{background:#1b1c22}
+.message-row.active:before{background:#f0b6d7}
+.message-head h2{font-weight:650;letter-spacing:-.04em}
+.dialog{background:#17181d;border-color:#373841;box-shadow:0 28px 90px #000a}
+.login-card{background:#141519;border-color:#2b2c33;box-shadow:0 24px 80px #0008}
+.mailbox-item-wrap{display:flex;align-items:center;gap:4px;min-width:0;border-radius:12px;padding-right:4px}
+.mailbox-item-wrap:hover{background:#17181d}
+.mailbox-item-wrap.active{background:#211d25}
+.mailbox-item{flex:1;min-width:0;display:flex;align-items:center;gap:7px;background:transparent;text-align:left;padding:9px 7px 9px 10px;border-radius:9px;color:#b8b6bf;font-size:12px}
+.mailbox-item:hover{color:#fff}
+.mailbox-address{display:flex;align-items:center;gap:7px;min-width:0}
+.mailbox-symbol{color:#aaa5b2;flex:none;font-size:12px}
+.mailbox-address-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mailbox-item-wrap.active .mailbox-item{color:#ffd9ec}
+.copy-address{width:29px;height:29px;flex:none;border-radius:9px;background:transparent;color:#777681;font-size:18px;line-height:1}
+.copy-address:hover{background:#302631;color:#ffd9ec}
+.mailbox-item-wrap.active .copy-address{color:#cfa8c1}
+.mobile-tools button{border-radius:12px}
+@media(max-width:600px){
+ .sidebar{background:rgba(12,13,16,.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+ .mailbox-list{gap:7px}
+ .mailbox-item-wrap{flex:none;width:auto;max-width:88vw;padding:0 4px 0 0;border:1px solid #303139;border-radius:13px;background:#15161a}
+ .mailbox-item-wrap.active{background:#2a222b;border-color:#6a5064}
+ .mailbox-item{width:auto;max-width:calc(88vw - 43px);padding:9px 6px 9px 10px}
+ .mailbox-address-text{max-width:62vw}
+ .copy-address{width:30px;height:30px;margin-right:1px;background:#202127}
+ .message-row{border-radius:14px;border-color:#292a31;background:rgba(19,20,24,.9);box-shadow:0 2px 8px #00000012}
+ .topbar h1{font-weight:650}
+}
