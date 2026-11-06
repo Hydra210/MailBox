@@ -1,96 +1,165 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#000000">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0c0f" id="theme-color">
   <title>Mailbox</title>
-  <link rel="stylesheet" href="/style.css?v=mail-html-1">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%237f96ff'/%3E%3Cpath d='M7 11.5l9 6 9-6' fill='none' stroke='%230a0d18' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='7' y='9' width='18' height='14' rx='3' fill='none' stroke='%230a0d18' stroke-width='2'/%3E%3C/svg%3E">
+  <script src="/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/style.css?v=mail-ui-2">
 </head>
 <body>
+  <!-- Icon sprite -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3.5 8l8.5 6 8.5-6"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V7a2 2 0 0 1 2-2h8"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></symbol>
+    <symbol id="i-clip" viewBox="0 0 24 24"><path d="M20 11.5l-8 8a5 5 0 0 1-7-7l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M15 8l4 4-4 4M19 12H9"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6L7 7M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></symbol>
+    <symbol id="i-dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></symbol>
+  </svg>
+
   <main id="login" class="login-wrap hidden">
     <form id="login-form" class="login-card">
-      <div class="brand-mark">M</div>
-      <p class="eyebrow">PRIVATE MAIL SYSTEM</p>
-      <h1>Welcome back.</h1>
-      <p class="muted">Sign in to access your inboxes.</p>
+      <div class="brand-mark big"><svg class="ic"><use href="#i-mail"/></svg></div>
+      <h1>Sign in to Mailbox</h1>
+      <p class="muted">Private, inbound-only mail for the domains you own.</p>
       <label for="password">Admin password</label>
-      <input id="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+      <div class="pw">
+        <input id="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+        <button id="pw-toggle" class="icon-btn small" type="button" aria-label="Show password"><svg class="ic"><use href="#i-eye"/></svg></button>
+      </div>
       <button class="primary full" type="submit">Sign in</button>
-      <p id="login-error" class="error"></p>
+      <p id="login-error" class="error" role="alert"></p>
     </form>
   </main>
 
   <div id="app" class="app hidden">
-    <aside class="sidebar">
-      <div class="brand"><div class="brand-mark small">M</div><span>mailbox</span><span class="brand-status"><i></i> PRIVATE</span><div class="mobile-tools"><button id="mobile-add-domain" aria-label="Add domain">＋</button><button id="mobile-add-mailbox" aria-label="Create inbox">✉</button><button id="mobile-logout" aria-label="Sign out">↗</button></div></div>
-      <div class="side-label">DOMAINS <span class="section-note">WORKSPACE</span></div>
-      <div id="domain-list" class="domain-list"></div>
-      <button id="add-domain" class="quiet-button">＋ Add domain</button>
-      <div class="side-divider"></div>
-      <div class="side-label row-between"><span>INBOXES</span><button id="add-mailbox" class="icon-button" title="Create inbox">＋</button></div>
-      <div id="mailbox-list" class="mailbox-list"></div>
-      <div class="sidebar-bottom">
-        <div class="status-dot"></div><span>Inbound only</span>
-        <button id="logout" class="logout">Sign out</button>
+    <aside id="sidebar" class="sidebar" aria-label="Domains and inboxes">
+      <div class="side-head">
+        <div class="brand"><span class="brand-mark"><svg class="ic"><use href="#i-mail"/></svg></span><span>Mailbox</span></div>
+        <button id="drawer-close" class="icon-btn only-drawer" type="button" aria-label="Close menu"><svg class="ic"><use href="#i-x"/></svg></button>
+      </div>
+
+      <div class="side-scroll">
+        <section>
+          <div class="side-title"><span>Domains</span><button id="add-domain" class="icon-btn small" type="button" aria-label="Add domain" title="Add domain"><svg class="ic"><use href="#i-plus"/></svg></button></div>
+          <div id="domain-list" class="domain-list"></div>
+        </section>
+
+        <section class="grow">
+          <div class="side-title"><span>Inboxes</span><button id="add-mailbox" class="icon-btn small" type="button" aria-label="New inbox" title="New inbox"><svg class="ic"><use href="#i-plus"/></svg></button></div>
+          <label class="filter"><svg class="ic"><use href="#i-search"/></svg><input id="mailbox-filter" type="search" placeholder="Filter inboxes" autocomplete="off" aria-label="Filter inboxes"></label>
+          <div id="mailbox-list" class="mailbox-list"></div>
+        </section>
+      </div>
+
+      <div class="side-foot">
+        <button id="groq-batch" class="foot-btn" type="button"><svg class="ic"><use href="#i-spark"/></svg><span>GroqCloud setup</span></button>
+        <button id="logout" class="foot-btn" type="button"><svg class="ic"><use href="#i-logout"/></svg><span>Sign out</span></button>
+        <div class="foot-row">
+          <span class="inbound-pill"><i></i>Inbound only</span>
+          <button id="theme-toggle" class="icon-btn small" type="button" aria-label="Switch theme" title="Switch theme"><svg class="ic"><use href="#i-sun"/></svg></button>
+        </div>
       </div>
     </aside>
+    <div id="drawer-backdrop" class="backdrop"></div>
 
     <section class="main">
       <header class="topbar">
-        <div><p class="eyebrow">MAILBOX <span class="live-indicator">● LIVE</span></p><h1 id="current-title">Select an inbox</h1></div>
-        <div class="top-actions"><input id="search" class="search" placeholder="Search messages…" type="search"><button id="groq-batch" class="secondary">GroqCloud setup</button><button id="refresh" class="secondary">Refresh</button></div>
+        <button id="menu-toggle" class="icon-btn only-drawer" type="button" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false"><svg class="ic"><use href="#i-menu"/></svg></button>
+        <div class="title-block">
+          <h1 id="current-title">Overview</h1>
+          <p id="current-sub" class="sub"></p>
+        </div>
+        <div class="top-actions">
+          <label id="search-box" class="search-box hidden"><svg class="ic"><use href="#i-search"/></svg><input id="search" type="search" placeholder="Search messages" autocomplete="off" aria-label="Search messages"></label>
+          <button id="refresh" class="icon-btn bordered" type="button" aria-label="Refresh" title="Refresh"><svg class="ic"><use href="#i-refresh"/></svg></button>
+        </div>
       </header>
+
       <div id="empty-state" class="empty-state">
-        <div class="empty-icon">✉</div>
-        <h2>Your inbox, your domains.</h2>
-        <p>Add a domain, create an address, then point its Cloudflare email route to this app.</p>
+        <div id="empty-content" class="empty-content"></div>
       </div>
+
       <div id="inbox-view" class="inbox-view hidden">
         <div class="message-layout">
-          <section class="message-list-panel">
-            <div class="list-heading"><span>Messages</span><span id="message-count" class="muted small-text"></span></div>
+          <section class="message-list-panel" aria-label="Messages">
+            <div class="list-heading"><span>Messages</span><span id="message-count" class="muted"></span></div>
             <div id="message-list" class="message-list"></div>
           </section>
-          <section id="message-panel" class="message-panel">
-            <div class="message-placeholder">Select a message to read it.</div>
-          </section>
+          <section id="message-panel" class="message-panel"></section>
         </div>
       </div>
     </section>
+
+    <button id="fab" class="fab" type="button"><svg class="ic"><use href="#i-plus"/></svg><span>New inbox</span></button>
   </div>
 
   <dialog id="domain-dialog" class="dialog">
     <form id="domain-form" method="dialog">
-      <div class="dialog-head"><h2>Add a domain</h2><button class="icon-button" value="cancel" formnovalidate>×</button></div>
-      <p class="muted">Add a domain you own and manage through Cloudflare.</p>
-      <label for="domain-name">Domain name</label><input id="domain-name" placeholder="example.com" required>
-      <div class="dialog-actions"><button class="secondary" value="cancel">Cancel</button><button class="primary" type="submit">Add domain</button></div>
-      <p id="domain-error" class="error"></p>
+      <div class="dialog-head"><h2>Add domain</h2><button class="icon-btn small" type="button" data-close aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button></div>
+      <p class="muted">Use a domain you own and manage in Cloudflare.</p>
+      <label for="domain-name">Domain name</label>
+      <input id="domain-name" placeholder="example.com" autocomplete="off" autocapitalize="none" spellcheck="false" required>
+      <p id="domain-error" class="error" role="alert"></p>
+      <div class="dialog-actions"><button class="secondary" type="button" data-close>Cancel</button><button class="primary" type="submit">Add domain</button></div>
     </form>
   </dialog>
 
   <dialog id="mailbox-dialog" class="dialog">
     <form id="mailbox-form" method="dialog">
-      <div class="dialog-head"><h2>Create inboxes</h2><button class="icon-button" value="cancel" formnovalidate>×</button></div>
-      <label for="mailbox-domain">Domain</label><select id="mailbox-domain" required></select>
-      <div class="form-tabs"><button type="button" class="tab active" data-tab="single">One address</button><button type="button" class="tab" data-tab="bulk">Numbered batch</button></div>
-      <div id="single-fields"><label for="local-part">Address name</label><input id="local-part" placeholder="hello" autocomplete="off"></div>
-      <div id="bulk-fields" class="hidden"><div class="two-fields"><div><label for="bulk-start">Start at</label><input id="bulk-start" type="number" min="1" value="1"></div><div><label for="bulk-count">How many</label><input id="bulk-count" type="number" min="1" max="100" value="10"></div></div><p class="hint">Creates numbered inboxes, up to 100 per batch.</p></div>
-      <div class="dialog-actions"><button class="secondary" value="cancel">Cancel</button><button class="primary" type="submit">Create</button></div>
-      <p id="mailbox-error" class="error"></p>
+      <div class="dialog-head"><h2>New inbox</h2><button class="icon-btn small" type="button" data-close aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button></div>
+      <label for="mailbox-domain">Domain</label>
+      <select id="mailbox-domain" required></select>
+      <div class="form-tabs" role="tablist">
+        <button type="button" class="tab active" data-tab="single">One address</button>
+        <button type="button" class="tab" data-tab="bulk">Numbered batch</button>
+      </div>
+      <div id="single-fields" class="field-group">
+        <label for="local-part">Address name</label>
+        <input id="local-part" placeholder="hello" autocomplete="off" autocapitalize="none" spellcheck="false">
+      </div>
+      <div id="bulk-fields" class="field-group hidden">
+        <div class="two-fields">
+          <div><label for="bulk-start">Start at</label><input id="bulk-start" type="number" min="1" value="1" inputmode="numeric"></div>
+          <div><label for="bulk-count">How many</label><input id="bulk-count" type="number" min="1" max="100" value="10" inputmode="numeric"></div>
+        </div>
+        <p class="hint">Creates numbered inboxes, up to 100 per batch.</p>
+      </div>
+      <p id="mailbox-error" class="error" role="alert"></p>
+      <div class="dialog-actions"><button class="secondary" type="button" data-close>Cancel</button><button class="primary" type="submit">Create</button></div>
     </form>
   </dialog>
+
   <dialog id="groq-dialog" class="dialog groq-dialog">
-    <div class="dialog-head"><h2>GroqCloud signup assistant</h2><button id="groq-close" class="icon-button" type="button">×</button></div>
-    <p class="muted">Choose the inboxes you want to use. Each step copies one address and opens GroqCloud's official signup page. Submit the form yourself, then move to the next address.</p>
-    <div class="groq-selection-head"><label><input id="groq-select-all" type="checkbox" checked> Select all inboxes</label><span id="groq-selected-count" class="muted small-text"></span></div>
-    <div id="groq-mailbox-options" class="groq-mailbox-options"></div>
-    <div id="groq-progress" class="groq-progress hidden"></div>
-    <div class="dialog-actions"><button id="groq-start" class="primary" type="button">Start batch</button><button id="groq-next" class="primary hidden" type="button">Next address</button></div>
-    <p id="groq-note" class="hint">This assistant does not submit registrations or bypass verification. You complete each signup manually.</p>
+    <div class="dialog-body">
+      <div class="dialog-head"><h2>GroqCloud setup</h2><button id="groq-close" class="icon-btn small" type="button" data-close aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button></div>
+      <p class="muted">Choose the inboxes to use. Each step copies one address and opens GroqCloud's official signup page. Submit the form yourself, then move to the next address.</p>
+      <div class="groq-selection-head"><label><input id="groq-select-all" type="checkbox" checked> Select all inboxes</label><span id="groq-selected-count" class="muted"></span></div>
+      <div id="groq-mailbox-options" class="groq-mailbox-options"></div>
+      <div id="groq-progress" class="groq-progress hidden"></div>
+      <div class="dialog-actions"><button id="groq-start" class="primary" type="button">Start batch</button><button id="groq-next" class="primary hidden" type="button">Next address</button></div>
+      <p id="groq-note" class="hint">This assistant does not submit registrations or bypass verification. You complete each signup manually.</p>
+    </div>
   </dialog>
-  <div id="toast" class="toast"></div>
-  <script src="/app.js?v=mail-html-1" defer></script>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="/app.js?v=mail-ui-2" defer></script>
 </body>
 </html>
