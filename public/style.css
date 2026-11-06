@@ -187,7 +187,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text"
 .mailbox-item-wrap{display:flex;align-items:center;gap:4px;min-width:0;border-radius:12px;padding-right:4px}
 .mailbox-item-wrap:hover{background:#17181d}
 .mailbox-item-wrap.active{background:#211d25}
-.mailbox-item{flex:1;min-width:0;display:flex;align-items:center;gap:7px;background:transparent;text-align:left;padding:9px 7px 9px 10px;border-radius:9px;color:#b8b6bf;font-size:12px}
+.mailbox-item{width:auto;flex:1;min-width:0;display:flex;align-items:center;gap:7px;background:transparent;text-align:left;padding:9px 7px 9px 10px;border-radius:9px;color:#b8b6bf;font-size:12px}
 .mailbox-item:hover{color:#fff}
 .mailbox-address{display:flex;align-items:center;gap:7px;min-width:0}
 .mailbox-symbol{color:#aaa5b2;flex:none;font-size:12px}
